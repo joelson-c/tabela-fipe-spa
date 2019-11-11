@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "mobx": "4.8.0",
-    "mobx-react": "^5.4.3",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8"
+    "mobx": "5.15.0",
+    "mobx-react": "^6.1.4",
+    "mobx-utils": "^5.5.2",
+    "normalize.css": "^8.0.1",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "react-scripts": "3.2.0",
+    "react-select": "^3.0.8",
+    "react-window": "^1.8.5",
+    "styled-components": "^4.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -26,6 +30,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.15.1",
     "mobx-remotedev": "^0.3.6"
   }
 }

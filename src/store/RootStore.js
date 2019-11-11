@@ -1,11 +1,13 @@
 import { configure } from 'mobx'
-import UserStore from './UserStore'
-import UIStore from './UIStore'
 
-export default class RootStore {
-  constructor() {
-    configure({ enforceActions: 'always' })
-    this.userStore = new UserStore()
-    this.uiStore = new UIStore()
-  }
-}
+import TransportLayer from '../api/TransportLayer'
+import UIStore from './UIStore'
+import Definitions from '../AppDefinitions'
+import ResourceStore from './ResourceStore'
+
+configure({ enforceActions: 'always' })
+
+const uiStore = new UIStore(Definitions.formSteps)
+const resourceStore = new ResourceStore(new TransportLayer())
+
+export default { uiStore, resourceStore }

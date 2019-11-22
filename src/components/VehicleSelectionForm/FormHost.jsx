@@ -1,14 +1,16 @@
-import React, { useContext } from 'react'
+import React, { useContext, Suspense } from 'react'
 import { observer } from 'mobx-react'
 import styled from 'styled-components'
 
 import { Container, GridItem } from '../Base/Grid'
 import Logo from '../Logo'
 import HeaderText from '../Base/HeaderText'
-import VehicleSelectionForm from '.'
 import ErrorHandler from '../ErrorHandler'
-import VehiclePriceResult from '../VehiclePriceResult'
 import StoreContext from '../../store/StoreContext'
+import LoadingIndicator from '../LoadingIndicator'
+
+const VehiclePriceResult = React.lazy(() => import('../VehiclePriceResult'))
+const VehicleSelectionForm = React.lazy(() => import('.'))
 
 const FormHostGridItem = styled(GridItem)`
   padding: 0 1.2em;
@@ -29,7 +31,9 @@ const FormHost = () => {
       </GridItem>
       <FormHostGridItem>
         <ErrorHandler>
-          {isFormFilled ? <VehiclePriceResult /> : <VehicleSelectionForm />}
+          <Suspense fallback={<LoadingIndicator />}>
+            {isFormFilled ? <VehiclePriceResult /> : <VehicleSelectionForm />}
+          </Suspense>
         </ErrorHandler>
       </FormHostGridItem>
     </Container>

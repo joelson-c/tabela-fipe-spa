@@ -1,40 +1,41 @@
-import React, { PureComponent } from 'react'
+import React, { useEffect } from 'react'
 import { observer } from 'mobx-react'
 import { isPromiseBasedObservable } from 'mobx-utils'
 
-import { StoreContext } from '../../store/StoreContext'
-import { toSelectableList } from './Helpers'
+import { useStores } from '../../store/StoreContext'
+import { toSelectableList, useResourceFetcher } from './Helpers'
 
-import SelectInput from '../Base/SelectInput'
+import SelectInput from '../SelectInput'
 import LoadingIndicator from '../LoadingIndicator'
 import FormActions from './FormActions'
 
-class VehicleSelectionForm extends PureComponent {
-  static contextType = StoreContext
+const VehicleSelectionForm = () => {
+  const { resourceStore, uiStore } = useStores()
+  const fetchResourceList = useResourceFetcher()
 
-  componentDidMount() {
-    this.fetchResourceList()
-  }
+  useEffect(() => {
+    fetchResourceList()
+  }, []) // eslint-disable-line
 
-  onSelectChange = (selectedOption) => {
-    const { formStepInfo, updateResourceInput } = this.context.uiStore
+  const onSelectChange = (selectedOption) => {
+    const { formStepInfo, updateResourceInput } = uiStore
 
     updateResourceInput(formStepInfo.id, selectedOption)
   }
 
-  onNextBtnClick = () => {
-    const { goToNextStep, isFinalStep } = this.context.uiStore
+  const onNextBtnClick = () => {
+    const { goToNextStep, isFinalStep } = uiStore
 
     goToNextStep()
 
     if (!isFinalStep) {
-      this.fetchResourceList()
+      fetchResourceList()
     }
   }
 
-  onPreviousBtnClick = () => {
-    const { formStepInfo, goToPreviousStep, updateResourceInput } = this.context.uiStore
-    const { getLastResourceList } = this.context.resourceStore
+  const onPreviousBtnClick = () => {
+    const { formStepInfo, goToPreviousStep, updateResourceInput } = uiStore
+    const { getLastResourceList } = resourceStore
 
     updateResourceInput(formStepInfo.id, null)
 
@@ -43,65 +44,56 @@ class VehicleSelectionForm extends PureComponent {
     getLastResourceList()
   }
 
-  onRestartBtnClick = () => {
-    const { formStepInfo, updateResourceInput } = this.context.uiStore
-    const { clearResourceCache } = this.context.resourceStore
+  const onRestartBtnClick = () => {
+    const { formStepInfo, updateResourceInput } = uiStore
+    const { clearResourceCache } = resourceStore
 
     updateResourceInput(formStepInfo.id, null)
     clearResourceCache()
 
-    this.context.uiStore.resetUI()
+    uiStore.resetUI()
 
-    this.fetchResourceList()
+    fetchResourceList()
   }
 
-  fetchResourceList() {
-    const { fetchVehicleResourceList } = this.context.resourceStore
-    const { formStepInfo, selectedBrand, selectedModel } = this.context.uiStore
+  const { currentResourceList } = resourceStore
+  const { formStepInfo, getSelectedValue } = uiStore
 
-    fetchVehicleResourceList(formStepInfo.id, { selectedBrand, selectedModel })
-  }
+  const selectedValue = getSelectedValue(formStepInfo.id)
 
-  render() {
-    const { currentResourceList } = this.context.resourceStore
-    const { formStepInfo, getSelectedValue } = this.context.uiStore
+  if (isPromiseBasedObservable(currentResourceList)) {
+    return currentResourceList.case({
+      pending: () => (
+        <LoadingIndicator actionText={formStepInfo.actionText} />
+      ),
+      fulfilled: (currentResourceListValue) => (
+        <>
+          <SelectInput
+            labelText={formStepInfo.inputLabel}
+            placeholder={formStepInfo.inputPlaceholderText}
+            value={selectedValue}
+            onChange={onSelectChange}
+            options={toSelectableList(currentResourceListValue)}
+            tabIndex="1"
+          />
 
-    const selectedValue = getSelectedValue(formStepInfo.id)
-
-    if (isPromiseBasedObservable(currentResourceList)) {
-      return currentResourceList.case({
-        pending: () => (
-          <LoadingIndicator actionText={formStepInfo.actionText} />
-        ),
-        fulfilled: (currentResourceListValue) => (
-          <>
-            <SelectInput
-              labelText={formStepInfo.inputLabel}
-              placeholder={formStepInfo.inputPlaceholderText}
-              value={selectedValue}
-              onChange={this.onSelectChange}
-              options={toSelectableList(currentResourceListValue)}
-              tabIndex="1"
-            />
-
-            <FormActions
-              nextBtnText={formStepInfo.nextBtnText}
-              isNextBtnDisabled={!selectedValue}
-              hasPreviousBtn={formStepInfo.hasPreviousBtn}
-              hasRestartBtn={formStepInfo.hasRestartBtn}
-              onNextBtnClick={this.onNextBtnClick}
-              onPreviousBtnClick={this.onPreviousBtnClick}
-              onRestartBtnClick={this.onRestartBtnClick}
-            />
-          </>
-        ),
-        rejected: (error) => {
-          throw new Error(error)
-        }
-      })
-    } else {
-      return null
-    }
+          <FormActions
+            nextBtnText={formStepInfo.nextBtnText}
+            isNextBtnDisabled={!selectedValue}
+            hasPreviousBtn={formStepInfo.hasPreviousBtn}
+            hasRestartBtn={formStepInfo.hasRestartBtn}
+            onNextBtnClick={onNextBtnClick}
+            onPreviousBtnClick={onPreviousBtnClick}
+            onRestartBtnClick={onRestartBtnClick}
+          />
+        </>
+      ),
+      rejected: (error) => {
+        throw new Error(error)
+      }
+    })
+  } else {
+    return null
   }
 }
 

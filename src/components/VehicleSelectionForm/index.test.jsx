@@ -4,7 +4,6 @@ import { mount } from 'enzyme'
 import FormWizard from '.'
 import Button from '../Base/Button'
 import LoadingIndicator from '../LoadingIndicator'
-import ErrorHandler from '../ErrorHandler'
 
 import StoreContext from '../../store/StoreContext'
 

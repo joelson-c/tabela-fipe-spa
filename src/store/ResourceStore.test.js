@@ -19,22 +19,18 @@ describe('ResourceStore', () => {
     ['marcas', Definitions.formStepIds.VEHICLE_BRAND, TestBrands],
     ['modelos', Definitions.formStepIds.VEHICLE_MODEL, TestVehicleModels],
     ['anos modelos', Definitions.formStepIds.VEHICLE_MODEL_YEAR, TestVehicleModelYears]
-  ])
-    ('deve retornar uma lista de %s', async (_, formStepId, expected) => {
-      testAutorun(() => {
-        store.fetchVehicleResourceList(
-          formStepId,
-          { selectedBrand: TestBrands[0], selectedModel: TestVehicleModels[0] }
-        )
-      })
+  ])('deve retornar uma lista de %s', async (_, formStepId, expected) => {
+    const [selectedBrand, selectedModel] = [TestBrands[0], TestVehicleModels[0]]
 
-      const result = store.currentResourceList
-
-      await when(() => result.state === FULFILLED)
-
-      expect(result.value).toEqual(expected)
-
+    testAutorun(() => {
+      store.fetchVehicleResourceList(formStepId, { selectedBrand, selectedModel })
     })
+    const result = store.currentResourceList
+    await when(() => result.state === FULFILLED)
+
+    expect(result.value).toEqual(expected)
+
+  })
 
   test('deve retornar uma exceção quando receber um ID invalido', () => {
     const invalidFormStepId = Number.MAX_VALUE
@@ -48,38 +44,27 @@ describe('ResourceStore', () => {
   })
 
   test('deve armanezar todas as listas de recursos em cache', async () => {
+    const [selectedBrand, selectedModel] = [TestBrands[0], TestVehicleModels[0]]
+
     store.fetchVehicleResourceList(Definitions.formStepIds.VEHICLE_BRAND)
-
     await when(() => store.currentResourceList.state === FULFILLED)
-
-    store.fetchVehicleResourceList(
-      Definitions.formStepIds.VEHICLE_MODEL,
-      { selectedBrand: TestBrands[0] }
-    )
-
+    store.fetchVehicleResourceList(Definitions.formStepIds.VEHICLE_MODEL, { selectedBrand })
     await when(() => store.currentResourceList.state === FULFILLED)
 
     expect(store.resourceCache).toMatchObject([TestBrands])
 
-    store.fetchVehicleResourceList(
-      Definitions.formStepIds.VEHICLE_MODEL_YEAR,
-      { selectedBrand: TestBrands[0], selectedModel: TestVehicleModels[0] }
-    )
-
+    store.fetchVehicleResourceList(Definitions.formStepIds.VEHICLE_MODEL_YEAR,{ selectedBrand, selectedModel })
     await when(() => store.currentResourceList.state === FULFILLED)
 
     expect(store.resourceCache).toMatchObject([TestBrands, TestVehicleModels])
   })
 
   test('deve apresentar recursos armazenados em cache', async () => {
+    const selectedBrand = TestBrands[0]
+
     store.fetchVehicleResourceList(Definitions.formStepIds.VEHICLE_BRAND)
-
     await when(() => store.currentResourceList.state === FULFILLED)
-
-    store.fetchVehicleResourceList(
-      Definitions.formStepIds.VEHICLE_MODEL,
-      { selectedBrand: TestBrands[0] }
-    )
+    store.fetchVehicleResourceList(Definitions.formStepIds.VEHICLE_MODEL,{ selectedBrand })
 
     store.getLastResourceList()
 

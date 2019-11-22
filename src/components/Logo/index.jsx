@@ -22,6 +22,7 @@ export default (props) => (
     data={logoSvg}
     aria-label="mobiauto"
     type="image/svg+xml"
+    tabIndex="-1"
     {...props}>
       mobiauto
   </LogoObject>

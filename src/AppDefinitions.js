@@ -23,7 +23,7 @@ export default class Definitions {
       id: this.formStepIds.VEHICLE_MODEL_YEAR,
       inputLabel: 'Ano modelo',
       inputPlaceholderText: 'Digite ou selecione um ano modelo',
-      actionText: 'Buscando informações...',
+      actionText: 'Buscando informações do veículo...',
       nextBtnText: 'Pesquisar',
       hasSearchBtn: true,
       hasPreviousBtn: true,

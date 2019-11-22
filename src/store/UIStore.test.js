@@ -1,5 +1,4 @@
 import UIStore from './UIStore'
-import { testAutorun } from '../testUtils'
 
 describe('UIStore', () => {
   let store
@@ -49,10 +48,13 @@ describe('UIStore', () => {
   })
 
   test('deve ir para a etapa anterior', () => {
-    const newStepId = 1
+    const [newStepId, newStepIdx] = [2, 1]
     const oldStepIdx = 0
 
     store.goToStep(newStepId)
+
+    expect(store.formStepIdx).toBe(newStepIdx)
+
     store.goToPreviousStep()
 
     expect(store.formStepIdx).toBe(oldStepIdx)
@@ -64,14 +66,37 @@ describe('UIStore', () => {
     expect(formStepInfo).toEqual({ id: 1, test: true })
   })
 
-  test('deve mostrar se o formulario esta preenchido', () => {
+  test('isFormFilled deve retornar verdadeiro caso o formulario esteja preenchido', () => {
     const newStepId = 2
+    const expResult = true
 
     store.goToStep(newStepId)
     store.goToNextStep()
 
-    const isFormFilled = store.isFormFilled
+    expect(store.isFormFilled).toBe(expResult)
+  })
 
-    expect(isFormFilled).toBe(true)
+  test('isFormFilled deve retornar falso caso o formulario não esteja preenchido', () => {
+    const newStepId = 2
+    const expResult = false
+
+    store.goToStep(newStepId)
+
+    expect(store.isFormFilled).toBe(expResult)
+  })
+
+  test('isFinalStep deve retornar verdadeiro caso o formulario esteja na etapa final', () => {
+    const newStepId = 2
+    const expResult = true
+
+    store.goToStep(newStepId)
+
+    expect(store.isFinalStep).toBe(expResult)
+  })
+
+  test('isFinalStep deve retornar falso caso o formulario não esteja na etapa final', () => {
+    const expResult = false
+
+    expect(store.isFinalStep).toBe(expResult)
   })
 })

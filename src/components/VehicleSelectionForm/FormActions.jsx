@@ -14,15 +14,15 @@ export default ({
     <>
       <ButtonContainer>
         <RightSideButtonContainer>
-          <Button onClick={onNextBtnClick} disabled={isNextBtnDisabled} tabIndex="2">
+          <Button type="button" onClick={onNextBtnClick} disabled={isNextBtnDisabled} tabIndex="2">
             {nextBtnText || 'Próximo'}
           </Button>
         </RightSideButtonContainer>
         {hasPreviousBtn && (
-          <Button onClick={onPreviousBtnClick} tabIndex="4" secondary>Anterior</Button>
+          <Button type="button" onClick={onPreviousBtnClick} tabIndex="4" secondary>Anterior</Button>
         )}
         {hasRestartBtn && (
-          <Button onClick={onRestartBtnClick} tabIndex="3" secondary>Reiniciar</Button>
+          <Button type="button" onClick={onRestartBtnClick} tabIndex="3" secondary>Reiniciar</Button>
         )}
       </ButtonContainer>
     </>

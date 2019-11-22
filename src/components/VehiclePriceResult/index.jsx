@@ -1,10 +1,11 @@
-import React, { PureComponent } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react'
 import { isPromiseBasedObservable } from 'mobx-utils'
 
 import { formatVehicleModel } from '../VehicleSelectionForm/Helpers'
-import { StoreContext } from '../../store/StoreContext'
+import { usePriceFetcher } from './Helpers'
+import { useStores } from '../../store/StoreContext'
 
 import Button, { ButtonContainer, RightSideButtonContainer } from '../Base/Button'
 import HeaderText from '../Base/HeaderText'
@@ -23,60 +24,56 @@ const Card = styled.div`
   padding: 15px;
 `
 
-class VehiclePriceResult extends PureComponent {
-  static contextType = StoreContext
+const VehiclePriceResult = () => {
+  const fetchVehiclePrice = usePriceFetcher()
+  const { uiStore, resourceStore } = useStores()
 
-  componentDidMount() {
-    const { selectedBrand, selectedModel, selectedModelYear } = this.context.uiStore
-    const { fetchVehiclePrice } = this.context.resourceStore
+  useEffect(() => {
+    fetchVehiclePrice()
+  }, []) // eslint-disable-line
 
-    fetchVehiclePrice({ selectedBrand, selectedModel, selectedModelYear })
-  }
-
-  onNewSearchBtnClick = () => {
-    const { resetUI } = this.context.uiStore
+  const onNewSearchBtnClick = () => {
+    const { resetUI } = uiStore
 
     resetUI()
   }
 
-  render() {
-    const { selectedModel } = this.context.uiStore
-    const { vehiclePriceResource } = this.context.resourceStore
+  const { selectedModel } = uiStore
+  const { vehiclePriceResource } = resourceStore
 
-    const [vehicleName, vehicleDescription] = formatVehicleModel(selectedModel.label)
+  const [vehicleName, vehicleDescription] = formatVehicleModel(selectedModel.label)
 
-    return (
-      <Card>
-        <HeaderText>{vehicleName}<small>{vehicleDescription}</small></HeaderText>
+  return (
+    <Card>
+      <HeaderText>{vehicleName}<small>{vehicleDescription}</small></HeaderText>
 
-        <VehiclePriceSkeleton>
-          {isPromiseBasedObservable(vehiclePriceResource) && vehiclePriceResource.case({
-            fulfilled: (vehiclePriceValue) => (
-              <>
-                <PriceValue>{vehiclePriceValue.price}</PriceValue>
-                <p>Mês de referência: {vehiclePriceValue.referenceMonth}</p>
-                <p>Ano modelo: {vehiclePriceValue.modelYear}</p>
-                <p>Codigo Fipe: {vehiclePriceValue.fipeCode}</p>
-              </>
-            ),
-            rejected: (error) => {
-              throw new Error(error)
-            }
-          })}
-        </VehiclePriceSkeleton>
+      <VehiclePriceSkeleton>
+        {isPromiseBasedObservable(vehiclePriceResource) && vehiclePriceResource.case({
+          fulfilled: (vehiclePriceValue) => (
+            <>
+              <PriceValue>{vehiclePriceValue.price}</PriceValue>
+              <p>Mês de referência: {vehiclePriceValue.referenceMonth}</p>
+              <p>Ano modelo: {vehiclePriceValue.modelYear}</p>
+              <p>Codigo Fipe: {vehiclePriceValue.fipeCode}</p>
+            </>
+          ),
+          rejected: (error) => {
+            throw new Error(error)
+          }
+        })}
+      </VehiclePriceSkeleton>
 
-        <ButtonContainer>
-          <RightSideButtonContainer>
-            <Button as="a" href="https://www.mobiauto.com.br" target="_blank" rel="noopener" tabIndex="2">
-              Ver anuncios na Mobiauto
-            </Button>
-          </RightSideButtonContainer>
+      <ButtonContainer>
+        <RightSideButtonContainer>
+          <Button as="a" href="https://www.mobiauto.com.br" target="_blank" rel="noopener" tabIndex="2">
+            Ver anuncios na Mobiauto
+          </Button>
+        </RightSideButtonContainer>
 
-          <Button onClick={this.onNewSearchBtnClick} tabIndex="1" secondary>Nova Pesquisa</Button>
-        </ButtonContainer>
-      </Card>
-    )
-  }
+        <Button onClick={onNewSearchBtnClick} tabIndex="1" secondary>Nova Pesquisa</Button>
+      </ButtonContainer>
+    </Card>
+  )
 }
 
 export default observer(VehiclePriceResult)

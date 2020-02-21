@@ -7,7 +7,7 @@ import { formatVehicleModel } from '../VehicleSelectionForm/Helpers'
 import { usePriceFetcher } from './Helpers'
 import { useStores } from '../../store/StoreContext'
 
-import Button, { ButtonContainer, RightSideButtonContainer } from '../Base/Button'
+import Button, { ButtonContainer } from '../Base/Button'
 import HeaderText from '../Base/HeaderText'
 import VehiclePriceSkeleton from './VehiclePriceSkeleton'
 
@@ -64,12 +64,6 @@ const VehiclePriceResult = () => {
       </VehiclePriceSkeleton>
 
       <ButtonContainer>
-        <RightSideButtonContainer>
-          <Button as="a" href="https://www.mobiauto.com.br" target="_blank" rel="noopener" tabIndex="2">
-            Ver anuncios na Mobiauto
-          </Button>
-        </RightSideButtonContainer>
-
         <Button onClick={onNewSearchBtnClick} tabIndex="1" secondary>Nova Pesquisa</Button>
       </ButtonContainer>
     </Card>

@@ -3,7 +3,6 @@ import { observer } from 'mobx-react'
 import styled from 'styled-components'
 
 import { Container, GridItem } from '../Base/Grid'
-import Logo from '../Logo'
 import HeaderText from '../Base/HeaderText'
 import ErrorHandler from '../ErrorHandler'
 import StoreContext from '../../store/StoreContext'
@@ -27,7 +26,6 @@ const FormHost = () => {
     <Container>
       <GridItem>
         <HeaderText centered>Tabela FIPE</HeaderText>
-        <Logo width="250px" centered />
       </GridItem>
       <FormHostGridItem>
         <ErrorHandler>

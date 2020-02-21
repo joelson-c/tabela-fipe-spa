@@ -1,5 +1,4 @@
 import { action, observable, decorate, computed } from 'mobx'
-import remotedev from 'mobx-remotedev'
 import { computedFn } from 'mobx-utils'
 
 import Definitions from "../AppDefinitions"
@@ -123,4 +122,4 @@ decorate(UIStore, {
   isFormFilled: computed
 })
 
-export default remotedev(UIStore, { global: true })
+export default UIStore

@@ -1,6 +1,5 @@
 import { action, observable, decorate, intercept } from 'mobx'
 import { fromPromise, computedFn, isPromiseBasedObservable, PENDING, FULFILLED } from 'mobx-utils'
-import remotedev from 'mobx-remotedev'
 
 import Definitions from "../AppDefinitions"
 
@@ -103,4 +102,4 @@ decorate(ResourceStore, {
   getLastResourceList: action
 })
 
-export default remotedev(ResourceStore, { global: true })
+export default ResourceStore

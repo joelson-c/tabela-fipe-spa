@@ -1,6 +1,7 @@
 {
-  "name": "test-front",
-  "version": "0.1.0",
+  "name": "tabela-fipe-spa",
+  "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "mobx": "5.15.0",
